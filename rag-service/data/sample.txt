@@ -1,0 +1,122 @@
+# PetHub Knowledge Base - Pet Care Guide
+
+## Vaccination Guide
+
+### Dogs
+Puppies should receive their first vaccinations at 6-8 weeks of age. Core vaccines include:
+- DHPP (Distemper, Hepatitis, Parvo, Parainfluenza)
+- Rabies (required by law in most places)
+- Bordetella (kennel cough) - recommended
+- Leptospirosis - recommended
+
+Vaccination schedule: 8 weeks (First DHPP), 12 weeks (Second DHPP + Rabies), 16 weeks (Third DHPP), then annual boosters. Adult dogs need rabies booster every 1-3 years depending on local law.
+
+### Cats
+Kittens need FVRCP (Feline Viral Rhinotracheitis, Calicivirus, Panleukopenia), Rabies, and FeLV (Leukemia) for outdoor cats.
+Schedule: 8 weeks (First FVRCP), 12 weeks (Second FVRCP + Rabies), 16 weeks (Third FVRCP), then boosters annually or per vet recommendation.
+
+## Nutrition & Feeding
+
+### Dogs
+Feed high-quality, balanced diet appropriate for age and size. Adults: 1-2 times daily. Puppies: 3-4 times daily.
+Foods to avoid: chocolate, grapes, raisins, onions, garlic, xylitol, avocado.
+Always provide fresh water.
+
+Large breed puppies need special formula for slower growth. Senior dogs benefit from lower calories and joint support.
+
+### Cats
+Cats are obligate carnivores - need meat-based protein. Feed 1-2 times daily for adults, 3-4 times for kittens.
+Foods to avoid: chocolate, onions, garlic, grapes, xylitol, raw fish.
+Indoor cats often need portion control as obesity is common.
+
+## Exercise & Activity
+
+### Dogs
+- Puppies: 5 minutes per month of age, 2-3 times daily
+- Adults: 30 minutes to 2 hours daily depending on breed
+- Herding breeds: 60-90 minutes high-intensity
+- Senior dogs: 20-30 minutes daily, low-impact
+
+### Cats
+- Interactive play: 15-20 minutes daily minimum
+- Enrichment: Climbing trees, window perches, puzzle feeders
+- Rotate toys to maintain interest
+- 2-3 play sessions daily for best behavior
+
+## Grooming & Hygiene
+
+### Dogs
+- Brushing: 2-3 times weekly (daily for long-haired)
+- Bathing: Monthly with dog shampoo
+- Nail trimming: Every 4-6 weeks
+- Ear cleaning: Weekly, especially for floppy-eared breeds
+- Dental: Brush 3-5 times weekly; professional cleaning annually
+
+### Cats
+- Long-haired: Brush 2-3 times weekly
+- Short-haired: Brush once weekly
+- Nail trimming: Every 4 weeks
+- Dental: Brush 3-5 times weekly
+- Most cats self-groom; help with mats in long-haired cats
+
+## Dental Health
+
+Dental disease affects 90% of pets over age 4 and can lead to tooth loss, infections, and organ disease.
+
+Prevention: Daily brushing (gold standard), dental diet, dental treats, professional cleaning annually.
+Signs of disease: Bad breath, tartar buildup, bleeding gums, loose teeth, difficulty eating, jaw swelling.
+
+## Common Health Issues
+
+### Fleas & Ticks
+Use monthly preventative medication (oral or topical). Products include Bravecto, NexGard, Simparica for dogs and Revolution/Capstar for cats.
+Treat house and yard as needed with vet guidance.
+
+### Urinary Tract Infections (UTI)
+Signs: Frequent urination, difficulty urinating, blood in urine, straining, indoor accidents.
+Prevention: Plenty of water, regular bathroom breaks, canned food for cats (higher moisture), good hygiene.
+Treatment: Antibiotics from vet, pain management, increased water intake.
+
+### Allergies
+Can be food or environmental. Signs include itching, red skin, hair loss, ear infections, vomiting or diarrhea.
+Management: Elimination diet (for food), environmental control, antihistamines or corticosteroids (vet prescribed), Omega-3 supplements.
+
+### Obesity
+Affects 55-60% of pets and increases risk of diabetes, joint problems, heart disease, and shortens lifespan.
+Management: Portion control, measure food, increase exercise, replace treats with carrots or green beans, regular weight monitoring.
+
+## Age-Related Care
+
+### Puppies (0-1 year)
+Frequent feeding (3-4 times daily), socialization critical from 3-12 weeks, positive training, vaccinations, deworming, microchipping, spay/neuter around 6 months.
+
+### Adult Dogs (1-7 years)
+Feed 1-2 times daily, exercise per breed guidelines, annual vet exams, vaccines, brush teeth regularly, annual dental cleaning.
+
+### Senior Dogs (7+ years)
+Biannual vet exams, senior diet formula, lower-impact exercise, joint supplements, orthopedic bed, monitor for cognitive decline.
+
+### Senior Cats (7+ years)
+Biannual exams, senior formula diet, kidney-friendly if needed, multiple water sources (consider fountain), easy-access litter boxes, monitor for kidney disease, thyroid disease, diabetes.
+
+## Emergency Warning Signs - Seek Immediate Care For:
+- Difficulty breathing
+- Loss of consciousness
+- Severe bleeding
+- Seizures
+- Suspected poisoning
+- Uncontrolled vomiting/diarrhea
+- Inability to urinate/defecate
+- Extreme lethargy or signs of pain
+- Pale gums
+- Suspected trauma
+
+## Regular Veterinary Care Schedule
+
+Puppies & Kittens: Every 3-4 weeks until 16 weeks (vaccines + exams)
+Adult Pets (1-7 years): Annual wellness exam, annual vaccines, annual blood work at 5+ years
+Senior Pets (7+ years): Biannual exams, biannual blood work, biannual urinalysis, dental cleaning as needed
+
+## Important Disclaimer
+
+This information is for educational purposes only and should not replace professional veterinary advice. Always consult a licensed veterinarian for your pet's medical needs. Pet care requires regular vet exams, preventative care, good nutrition, exercise, dental care, and love.

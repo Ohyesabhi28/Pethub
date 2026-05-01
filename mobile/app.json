@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "PetHub",
+    "slug": "pethub",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pethub.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "PetHub needs camera access for video consultations.",
+        "NSMicrophoneUsageDescription": "PetHub needs microphone access for video consultations.",
+        "NSPhotoLibraryUsageDescription": "PetHub needs photo access to upload pet pictures."
+      },
+      "bitcode": false
+    },
+    "android": {
+      "package": "com.pethub.official",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "NOTIFICATIONS",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH"
+      ]
+    },
+    "plugins": [
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "cameraPermission": "PetHub needs camera access for video consultations.",
+          "microphonePermission": "PetHub needs microphone access for video consultations."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0ecac879-6c86-48bc-8307-0629422d99ef"
+      }
+    }
+  }
+}

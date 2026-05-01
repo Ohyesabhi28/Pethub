@@ -1,0 +1,32 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+
+# Expo / React Native
+.expo/
+dist/
+/mobile/android
+/mobile/ios
+/mobile/node_modules
+
+# Python / RAG Service
+rag-service/.venv/
+rag-service/__pycache__/
+rag-service/.faiss_index/
+*.pyc
+*.pyo
+*.pyd
+
+# Firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# OS Files
+.DS_Store
+Thumbs.db

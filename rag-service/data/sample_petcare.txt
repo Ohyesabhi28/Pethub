@@ -1,0 +1,40 @@
+PETHUB SAMPLE KNOWLEDGE BASE
+============================
+This is a synthetic, non-clinical demo corpus so the RAG pipeline has something to retrieve before you add real PDFs.
+HUMAN_ACTION_REQUIRED: drop authoritative pet-care PDFs (e.g. AAHA, AVMA, WSAVA guidelines) into this folder and POST /reindex.
+
+DOG VACCINATIONS (CORE)
+Core vaccines for dogs typically include rabies, canine distemper virus (CDV), canine adenovirus type 2 (CAV-2), and canine parvovirus type 2 (CPV-2). Puppies receive a series of vaccinations starting around six to eight weeks of age, repeated every three to four weeks until at least sixteen weeks. Adult boosters are commonly given every one to three years depending on the vaccine type and local regulations.
+
+CAT VACCINATIONS (CORE)
+Core vaccines for cats include rabies and FVRCP, which combines feline viral rhinotracheitis (FVR), feline calicivirus (FCV), and feline panleukopenia virus (FPV). Indoor-only cats still benefit from core vaccines because some viruses are extremely durable in the environment.
+
+FLEAS, TICKS, AND HEARTWORM PREVENTION
+Modern parasiticides are combined isoxazoline products such as fluralaner (Bravecto) or afoxolaner (NexGard) that protect against fleas and ticks. Heartworm prevention typically uses macrocyclic lactones such as ivermectin (Heartgard Plus) or selamectin (Revolution). Year-round prevention is widely recommended.
+
+NUTRITION BASICS
+Adult dogs are typically fed twice daily with a complete and balanced diet appropriate for their life stage. Cats prefer multiple smaller meals per day. Pet weight should be monitored regularly. Foods toxic to dogs include chocolate (theobromine), grapes and raisins (acute kidney injury), onions and garlic (oxidative damage to red blood cells), macadamia nuts, xylitol (severe hypoglycemia), and large quantities of alcohol or caffeine. Cats are particularly sensitive to lily ingestion (acute renal failure), onions, and excessive raw fish (thiaminase exposure).
+
+EMERGENCY SIGNS — SEEK IMMEDIATE VETERINARY CARE
+Persistent vomiting, vomiting blood, severe diarrhea with blood, sudden collapse, seizures, difficulty breathing, pale or blue gums, suspected toxin ingestion, distended abdomen with unproductive retching (possible GDV in deep-chested dogs), eye injury, prolonged labor, or known trauma require immediate veterinary attention.
+
+DENTAL HEALTH
+Regular tooth brushing with veterinary toothpaste (never human toothpaste — fluoride is toxic to pets) supports oral health. Dental cleanings under anesthesia are performed periodically as recommended by your vet. Signs of dental disease include bad breath, drooling, reluctance to eat, and gum redness or bleeding.
+
+ARTHRITIS AND JOINT CARE
+Older dogs and cats commonly develop osteoarthritis. Weight management is the single most impactful intervention. Joint supplements containing glucosamine and chondroitin are often used. Veterinary-prescribed NSAIDs such as meloxicam (Metacam) or carprofen (Rimadyl) for dogs may be prescribed; never give human NSAIDs (ibuprofen, naproxen, acetaminophen) to pets — they can be fatal, particularly in cats.
+
+EAR INFECTIONS
+Recurrent head shaking, ear scratching, odor, or discharge can indicate otitis externa. Treatment usually involves cleaning and topical medication; underlying allergies are a common cause.
+
+SKIN ALLERGIES
+Atopic dermatitis is common in dogs. Modern treatments include oclacitinib (Apoquel), lokivetmab (Cytopoint injections), and immunotherapy. Bathing, omega-3 supplementation, and flea control are foundational.
+
+REPRODUCTIVE HEALTH
+Spay/neuter timing varies by breed and size. Large-breed dogs may benefit from delayed neutering. Discuss with your vet.
+
+GERIATRIC CARE
+Senior pets benefit from twice-yearly veterinary checkups, blood work, and weight monitoring. Common geriatric issues include arthritis, kidney disease, dental disease, and cognitive dysfunction.
+
+DISCLAIMER
+This document is general educational content, not medical advice. Always consult a licensed veterinarian for diagnosis and treatment.
