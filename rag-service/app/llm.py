@@ -120,10 +120,16 @@ async def generate_answer(
     question: str, context: str, pet_context: Optional[dict]
 ) -> LLMResult:
     prompt = _build_prompt(question, context, pet_context)
-    text = await _try_ollama(prompt)
-    if text:
-        return LLMResult(text=text, source="ollama")
+    
+    # Try OpenRouter first (Cloud)
     text = await _try_openrouter(prompt)
     if text:
         return LLMResult(text=text, source="openrouter")
+
+    # Fallback to Ollama only if enabled
+    if os.getenv("OLLAMA_ENABLED", "true").lower() == "true":
+        text = await _try_ollama(prompt)
+        if text:
+            return LLMResult(text=text, source="ollama")
+
     return LLMResult(text=_rule_based(question, pet_context), source="rule_based")

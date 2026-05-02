@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: pethub-backend
+    env: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 4000
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: "*"
+      # Add other required vars here or in Render Dashboard
+      - fromGroup: pethub-secrets
+
+  - type: web
+    name: pethub-rag-service
+    env: python
+    rootDir: rag-service
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 5000
+      - fromGroup: pethub-secrets
