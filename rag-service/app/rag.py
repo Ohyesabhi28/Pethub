@@ -74,7 +74,7 @@ class RAGStore:
 
     def _get_embeddings(self, texts: List[str]) -> List[List[float]]:
         """Fetch embeddings from Hugging Face Inference API."""
-        api_url = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{self.embed_model_name}"
+        api_url = f"https://api-inference.huggingface.co/models/{self.embed_model_name}"
         headers = {"Authorization": f"Bearer {self.hf_token}"} if self.hf_token else {}
         
         # HF API handles batches. For very large datasets, we might need to chunk this.

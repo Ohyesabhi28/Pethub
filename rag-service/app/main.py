@@ -41,7 +41,7 @@ app = FastAPI(title="PetHub RAG Service", version="0.1.0", lifespan=lifespan)
 
 @app.get("/health")
 async def health():
-    is_ready = store is not None and store.model is not None
+    is_ready = store is not None and store.index is not None
     return {
         "ok": True, 
         "status": "ready" if is_ready else "loading",
@@ -52,8 +52,8 @@ async def health():
 @app.post("/reindex")
 async def reindex():
     """Force rebuild the index from data/. Useful after adding new PDFs."""
-    if store is None or store.model is None:
-        raise HTTPException(status_code=503, detail="store not ready (still loading model)")
+    if store is None or store.index is None:
+        raise HTTPException(status_code=503, detail="store not ready (still loading index)")
     
     await asyncio.to_thread(store._build)  # noqa: SLF001
     await asyncio.to_thread(store._save)   # noqa: SLF001
@@ -62,7 +62,7 @@ async def reindex():
 
 @app.post("/query", response_model=QueryResponse)
 async def query(req: QueryRequest):
-    if store is None or store.model is None:
+    if store is None or store.index is None:
         raise HTTPException(status_code=503, detail="RAG store is still initializing. Please try again in a minute.")
 
     top_k = int(os.getenv("TOP_K", "5"))
