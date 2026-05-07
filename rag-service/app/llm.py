@@ -75,19 +75,30 @@ async def _try_huggingface(prompt: str) -> Optional[str]:
     if not key:
         print("[llm:hf] Error: HF_API_TOKEN not set")
         return None
-    # Force HF's own servers (not third-party providers like Novita/Together)
-    model = os.getenv("HF_LLM_MODEL", "meta-llama/Llama-3.2-3B-Instruct")
+    model = os.getenv("HF_LLM_MODEL", "tiiuae/falcon-7b-instruct")
+    url = f"https://api-inference.huggingface.co/models/{model}"
+    print(f"[llm:hf] calling {url}", flush=True)
     try:
-        from huggingface_hub import InferenceClient
-        # provider="hf-inference" forces use of HF's own free Inference API
-        client = InferenceClient(model=model, token=key, provider="hf-inference")
-        print(f"[llm:hf] using model: {model}", flush=True)
-        response = client.chat_completion(
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=500,
-            temperature=0.3,
-        )
-        return response.choices[0].message.content.strip() or None
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            r = await client.post(
+                url,
+                headers={"Authorization": f"Bearer {key}"},
+                json={
+                    "inputs": prompt,
+                    "parameters": {
+                        "max_new_tokens": 300,
+                        "return_full_text": False,
+                        "temperature": 0.3,
+                    }
+                }
+            )
+            if r.status_code != 200:
+                print(f"[llm:hf] error {r.status_code}: {r.text}")
+                return None
+            data = r.json()
+            if isinstance(data, list) and data:
+                return data[0].get("generated_text", "").strip() or None
+            return None
     except Exception as e:
         print(f"[llm:hf] failed: {e}")
         return None
