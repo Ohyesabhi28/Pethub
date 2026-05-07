@@ -128,16 +128,23 @@ async def generate_answer(
     question: str, context: str, pet_context: Optional[dict]
 ) -> LLMResult:
     prompt = _build_prompt(question, context, pet_context)
-    
-    # Try Hugging Face first (Cloud)
-    text = await _try_huggingface(prompt)
-    if text:
-        return LLMResult(text=text, source="huggingface")
 
-    # Fallback to Ollama only if enabled
-    if os.getenv("OLLAMA_ENABLED", "true").lower() == "true":
+    # Try Ollama only if enabled (local dev only)
+    if os.getenv("OLLAMA_ENABLED", "false").lower() == "true":
         text = await _try_ollama(prompt)
         if text:
             return LLMResult(text=text, source="ollama")
+
+    # If no LLM is available, return the retrieved context directly.
+    # This is a valid RAG response — the relevant document excerpt IS the answer.
+    if context and context.strip() and context.strip() != "(no documents indexed)":
+        who = f"For **{pet_context['name']}**: " if pet_context and pet_context.get("name") else ""
+        answer = (
+            f"{who}Based on your pet health documents:\n\n"
+            f"{context.strip()}\n\n"
+            f"_This information is from your uploaded documents. "
+            f"Always confirm with a licensed veterinarian for your pet's specific needs._"
+        )
+        return LLMResult(text=answer, source="rag_context")
 
     return LLMResult(text=_rule_based(question, pet_context), source="rule_based")
