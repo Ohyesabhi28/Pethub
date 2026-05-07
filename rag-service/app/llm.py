@@ -74,7 +74,7 @@ async def _try_openrouter(prompt: str) -> Optional[str]:
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return None
-    model = os.getenv("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
+    model = os.getenv("OPENROUTER_MODEL", "google/gemini-flash-1.5-exp")
     timeout = float(os.getenv("OPENROUTER_TIMEOUT_S", "25"))
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -82,17 +82,19 @@ async def _try_openrouter(prompt: str) -> Optional[str]:
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
                     "Authorization": f"Bearer {key}",
-                    "HTTP-Referer": "http://localhost",
-                    "X-Title": "PetHub MVP",
+                    "HTTP-Referer": "https://pethub.com", # Use a real-looking domain
+                    "X-Title": "PetHub Assistant",
                 },
                 json={"model": model, "messages": [{"role": "user", "content": prompt}],
-                      "max_tokens": 400, "temperature": 0.3},
+                      "max_tokens": 500, "temperature": 0.3},
             )
+            if r.status_code != 200:
+                print(f"[llm:openrouter] error {r.status_code}: {r.text}")
             r.raise_for_status()
             data = r.json()
             return (data["choices"][0]["message"]["content"] or "").strip() or None
     except Exception as e:
-        print(f"[llm:openrouter] failed: {e}")
+        print(f"[llm:openrouter] request failed: {e}")
         return None
 
 
