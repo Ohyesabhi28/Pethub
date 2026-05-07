@@ -5,6 +5,9 @@ import os
 import asyncio
 from contextlib import asynccontextmanager
 
+# These are light and needed for type hinting
+from .schemas import QueryRequest
+
 print("[rag-service] script starting...", flush=True)
 
 # Move heavy imports inside to allow the server to start instantly
@@ -12,7 +15,6 @@ def get_app():
     print("[rag-service] importing dependencies...", flush=True)
     from dotenv import load_dotenv
     from fastapi import FastAPI
-    from .schemas import QueryRequest
     
     print("[rag-service] loading .env...", flush=True)
     load_dotenv()
