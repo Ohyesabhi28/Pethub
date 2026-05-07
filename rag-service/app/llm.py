@@ -70,30 +70,30 @@ async def _try_ollama(prompt: str) -> Optional[str]:
         return None
 
 
-async def _try_openrouter(prompt: str) -> Optional[str]:
-    key = os.getenv("OPENROUTER_API_KEY")
+async def _try_huggingface(prompt: str) -> Optional[str]:
+    key = os.getenv("HF_API_TOKEN")
     if not key:
+        print("[llm:hf] Error: HF_API_TOKEN not set")
         return None
-    model = os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-exp:free")
-    print(f"[llm:openrouter] using model: {model}", flush=True)
-    timeout = float(os.getenv("OPENROUTER_TIMEOUT_S", "25"))
+    # Using a fast, high-quality model available on HF Inference API
+    model = os.getenv("HF_LLM_MODEL", "mistralai/Mistral-7B-Instruct-v0.3")
     try:
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            r = await client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {key}",
-                },
-                json={"model": model, "messages": [{"role": "user", "content": prompt}],
-                      "max_tokens": 500, "temperature": 0.3},
-            )
-            if r.status_code != 200:
-                print(f"[llm:openrouter] error {r.status_code}: {r.text}")
-            r.raise_for_status()
-            data = r.json()
-            return (data["choices"][0]["message"]["content"] or "").strip() or None
+        from huggingface_hub import InferenceClient
+        client = InferenceClient(model=model, token=key)
+        
+        # Format for instruction models
+        formatted_prompt = f"<s>[INST] {prompt} [/INST]"
+        
+        response = client.text_generation(
+            formatted_prompt,
+            max_new_tokens=500,
+            temperature=0.3,
+            repetition_penalty=1.1,
+            stop_sequences=["</s>"]
+        )
+        return response.strip() or None
     except Exception as e:
-        print(f"[llm:openrouter] request failed: {e}")
+        print(f"[llm:hf] failed: {e}")
         return None
 
 
@@ -122,10 +122,10 @@ async def generate_answer(
 ) -> LLMResult:
     prompt = _build_prompt(question, context, pet_context)
     
-    # Try OpenRouter first (Cloud)
-    text = await _try_openrouter(prompt)
+    # Try Hugging Face first (Cloud)
+    text = await _try_huggingface(prompt)
     if text:
-        return LLMResult(text=text, source="openrouter")
+        return LLMResult(text=text, source="huggingface")
 
     # Fallback to Ollama only if enabled
     if os.getenv("OLLAMA_ENABLED", "true").lower() == "true":
