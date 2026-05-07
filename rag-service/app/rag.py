@@ -73,32 +73,22 @@ class RAGStore:
     # --- internals ---
 
     def _get_embeddings(self, texts: List[str]) -> List[List[float]]:
-        """Fetch embeddings from Hugging Face Inference API."""
-        # Use the standard Inference API URL
-        api_url = f"https://api-inference.huggingface.co/models/{self.embed_model_name}"
-        headers = {"Authorization": f"Bearer {self.hf_token}"} if self.hf_token else {}
+        """Fetch embeddings from Hugging Face Inference API using the official client."""
+        from huggingface_hub import InferenceClient
+        client = InferenceClient(token=self.hf_token)
         
-        # HF API handles batches. For very large datasets, we might need to chunk this.
-        max_retries = 3
-        for i in range(max_retries):
-            try:
-                response = httpx.post(api_url, headers=headers, json={"inputs": texts, "options": {"wait_for_model": True}}, timeout=60.0)
-                if response.status_code == 200:
-                    return response.json()
-                elif response.status_code == 503 and i < max_retries - 1:
-                    # Model is loading on HF side
-                    time.sleep(5)
-                    continue
-                else:
-                    print(f"[rag] HF API Error: {response.status_code} - {response.text}")
-                    # Fallback to zeros if API fails (not ideal, but prevents crash)
-                    return [[0.0] * self.dim for _ in texts]
-            except Exception as e:
-                print(f"[rag] Embedding request failed: {e}")
-                if i == max_retries - 1:
-                    return [[0.0] * self.dim for _ in texts]
-                time.sleep(2)
-        return [[0.0] * self.dim for _ in texts]
+        print(f"[rag] requesting embeddings for {len(texts)} texts...", flush=True)
+        try:
+            # feature_extraction returns a list of embeddings for the input texts
+            response = client.feature_extraction(texts, model=self.embed_model_name)
+            # Response is typically a numpy array or list of lists
+            if hasattr(response, "tolist"):
+                return response.tolist()
+            return response
+        except Exception as e:
+            print(f"[rag] HF API Client Error: {e}", flush=True)
+            # Fallback to zeros if API fails
+            return [[0.0] * self.dim for _ in texts]
 
     def _index_is_fresh(self) -> bool:
         meta = self.index_dir / "meta.json"
