@@ -9,10 +9,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || 'AIzaSyDemoEmulatorKey',
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || 'pethub-local.firebaseapp.com',
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || 'pethub-local',
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || '1:000000000000:web:0000000000000000000000',
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || 'AIzaSyClXmTRPsEpvsY0XbXq_BdwD66G2TC753g',
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || 'pethub-d59ec.firebaseapp.com',
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || 'pethub-d59ec',
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || '1:781129287724:web:f627c49d9d6a4d967de989',
 };
 
 const app = initializeApp(firebaseConfig);
@@ -25,7 +25,7 @@ try {
   _auth = getAuth(app);
 }
 
-const useEmulator = (process.env.EXPO_PUBLIC_FIREBASE_USE_EMULATOR || 'true').toLowerCase() === 'true';
+const useEmulator = (process.env.EXPO_PUBLIC_FIREBASE_USE_EMULATOR || 'false').toLowerCase() === 'true';
 
 if (useEmulator) {
   // Set EXPO_PUBLIC_FIREBASE_AUTH_EMULATOR_URL to your dev machine's LAN IP when testing

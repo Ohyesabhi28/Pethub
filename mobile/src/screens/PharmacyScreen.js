@@ -68,7 +68,7 @@ export default function PharmacyScreen() {
         const options = {
           description: 'PetHub Pharmacy Order',
           currency: 'INR',
-          key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
+          key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_Sjl8rbraXb2cls',
           amount: Math.round(r.data.total * 100),
           name: 'PetHub',
           order_id: r.data.razorpayOrderId,
