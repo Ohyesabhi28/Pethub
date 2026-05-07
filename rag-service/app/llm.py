@@ -74,7 +74,7 @@ async def _try_openrouter(prompt: str) -> Optional[str]:
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return None
-    model = os.getenv("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
+    model = os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-exp:free")
     print(f"[llm:openrouter] using model: {model}", flush=True)
     timeout = float(os.getenv("OPENROUTER_TIMEOUT_S", "25"))
     try:
@@ -83,8 +83,6 @@ async def _try_openrouter(prompt: str) -> Optional[str]:
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
                     "Authorization": f"Bearer {key}",
-                    "HTTP-Referer": "https://pethub.com", # Use a real-looking domain
-                    "X-Title": "PetHub Assistant",
                 },
                 json={"model": model, "messages": [{"role": "user", "content": prompt}],
                       "max_tokens": 500, "temperature": 0.3},
