@@ -1,14 +1,12 @@
-"""LLM dispatcher: Ollama (primary) -> OpenRouter (fallback) -> rule-based (final).
+"""LLM dispatcher: Groq (primary) -> Ollama (local fallback) -> rule-based (final).
 
-The order is intentional: local + free + offline first, network LLM second,
-canned advice last. This is the inverse of the brief, which had OpenRouter
-as primary; OpenRouter requires network + API key + isn't always available.
+Groq offers a free API with Llama 3.3 70B — fast, reliable, no credit card needed.
+Sign up at https://console.groq.com and add GROQ_API_KEY to your environment.
 """
 from __future__ import annotations
 import os
-import asyncio
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional
 
 import httpx
 
@@ -27,7 +25,7 @@ SYSTEM_PROMPT = (
 @dataclass
 class LLMResult:
     text: str
-    source: str  # "ollama" | "openrouter" | "rule_based"
+    source: str  # "groq" | "ollama" | "rule_based"
 
 
 def _build_prompt(question: str, context: str, pet_context: Optional[dict]) -> str:
@@ -43,11 +41,64 @@ def _build_prompt(question: str, context: str, pet_context: Optional[dict]) -> s
         if bits:
             pet_block = "\n\nPet profile: " + ", ".join(bits)
     return (
-        f"{SYSTEM_PROMPT}\n\n"
         f"Context:\n{context or '(no documents indexed)'}\n"
         f"{pet_block}\n\n"
         f"Question: {question}\n\nAnswer:"
     )
+
+
+async def _try_groq(question: str, context: str, pet_context: Optional[dict]) -> Optional[str]:
+    """Use Groq's free API with Llama 3.3 70B — fast and reliable."""
+    key = os.getenv("GROQ_API_KEY")
+    if not key:
+        print("[llm:groq] GROQ_API_KEY not set, skipping.", flush=True)
+        return None
+    model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    print(f"[llm:groq] using model: {model}", flush=True)
+    
+    # Build pet context string for system message
+    pet_block = ""
+    if pet_context:
+        bits = []
+        if pet_context.get("name"): bits.append(f"name={pet_context['name']}")
+        if pet_context.get("species"): bits.append(f"species={pet_context['species']}")
+        if pet_context.get("breed"): bits.append(f"breed={pet_context['breed']}")
+        if pet_context.get("age") is not None: bits.append(f"age={pet_context['age']}y")
+        if bits:
+            pet_block = "\n\nPet profile: " + ", ".join(bits)
+    
+    user_message = (
+        f"Context from pet health documents:\n{context or '(none)'}\n"
+        f"{pet_block}\n\n"
+        f"Question: {question}"
+    )
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            r = await client.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_message},
+                    ],
+                    "max_tokens": 500,
+                    "temperature": 0.3,
+                },
+            )
+            if r.status_code != 200:
+                print(f"[llm:groq] error {r.status_code}: {r.text}", flush=True)
+                return None
+            data = r.json()
+            return (data["choices"][0]["message"]["content"] or "").strip() or None
+    except Exception as e:
+        print(f"[llm:groq] failed: {e}", flush=True)
+        return None
 
 
 async def _try_ollama(prompt: str) -> Optional[str]:
@@ -67,40 +118,6 @@ async def _try_ollama(prompt: str) -> Optional[str]:
             return text or None
     except Exception as e:
         print(f"[llm:ollama] failed: {e}")
-        return None
-
-
-async def _try_huggingface(prompt: str) -> Optional[str]:
-    key = os.getenv("HF_API_TOKEN")
-    if not key:
-        print("[llm:hf] Error: HF_API_TOKEN not set")
-        return None
-    model = os.getenv("HF_LLM_MODEL", "tiiuae/falcon-7b-instruct")
-    url = f"https://api-inference.huggingface.co/models/{model}"
-    print(f"[llm:hf] calling {url}", flush=True)
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            r = await client.post(
-                url,
-                headers={"Authorization": f"Bearer {key}"},
-                json={
-                    "inputs": prompt,
-                    "parameters": {
-                        "max_new_tokens": 300,
-                        "return_full_text": False,
-                        "temperature": 0.3,
-                    }
-                }
-            )
-            if r.status_code != 200:
-                print(f"[llm:hf] error {r.status_code}: {r.text}")
-                return None
-            data = r.json()
-            if isinstance(data, list) and data:
-                return data[0].get("generated_text", "").strip() or None
-            return None
-    except Exception as e:
-        print(f"[llm:hf] failed: {e}")
         return None
 
 
@@ -127,24 +144,16 @@ def _rule_based(question: str, pet_context: Optional[dict]) -> str:
 async def generate_answer(
     question: str, context: str, pet_context: Optional[dict]
 ) -> LLMResult:
-    prompt = _build_prompt(question, context, pet_context)
+    # Try Groq first (cloud, free, fast)
+    text = await _try_groq(question, context, pet_context)
+    if text:
+        return LLMResult(text=text, source="groq")
 
-    # Try Ollama only if enabled (local dev only)
+    # Try Ollama (local dev only)
     if os.getenv("OLLAMA_ENABLED", "false").lower() == "true":
+        prompt = _build_prompt(question, context, pet_context)
         text = await _try_ollama(prompt)
         if text:
             return LLMResult(text=text, source="ollama")
-
-    # If no LLM is available, return the retrieved context directly.
-    # This is a valid RAG response — the relevant document excerpt IS the answer.
-    if context and context.strip() and context.strip() != "(no documents indexed)":
-        who = f"For **{pet_context['name']}**: " if pet_context and pet_context.get("name") else ""
-        answer = (
-            f"{who}Based on your pet health documents:\n\n"
-            f"{context.strip()}\n\n"
-            f"_This information is from your uploaded documents. "
-            f"Always confirm with a licensed veterinarian for your pet's specific needs._"
-        )
-        return LLMResult(text=answer, source="rag_context")
 
     return LLMResult(text=_rule_based(question, pet_context), source="rule_based")
