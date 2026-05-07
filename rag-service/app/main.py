@@ -1,9 +1,11 @@
 """FastAPI entrypoint for the RAG microservice."""
 from __future__ import annotations
+print("[rag-service] script starting...")
 import os
 import asyncio
 from contextlib import asynccontextmanager
 
+print("[rag-service] importing dependencies...")
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 import uvicorn
@@ -13,6 +15,7 @@ from .rag import RAGStore
 from .llm import generate_answer
 from .safety import sanitize, with_disclaimer
 
+print("[rag-service] loading .env...")
 load_dotenv()
 
 store: RAGStore | None = None
@@ -21,6 +24,7 @@ store: RAGStore | None = None
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     global store
+    print("[rag-service] lifespan starting...")
     store = RAGStore(
         embed_model=os.getenv("EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2"),
         data_dir=os.getenv("DATA_DIR", "./data"),
@@ -34,8 +38,10 @@ async def lifespan(_app: FastAPI):
     asyncio.create_task(asyncio.to_thread(store.build_or_load))
     
     yield
+    print("[rag-service] lifespan shutting down...")
 
 
+print("[rag-service] creating FastAPI app...")
 app = FastAPI(title="PetHub RAG Service", version="0.1.0", lifespan=lifespan)
 
 
