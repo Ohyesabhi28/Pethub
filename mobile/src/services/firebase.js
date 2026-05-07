@@ -28,11 +28,12 @@ try {
 const useEmulator = (process.env.EXPO_PUBLIC_FIREBASE_USE_EMULATOR || 'true').toLowerCase() === 'true';
 
 if (useEmulator) {
-  // HUMAN_ACTION_REQUIRED: change host to your dev machine's LAN IP for real-device testing.
-  const EMULATOR_HOST = 'http://192.168.1.42:9099';
+  // Set EXPO_PUBLIC_FIREBASE_AUTH_EMULATOR_URL to your dev machine's LAN IP when testing
+  // on a real device (e.g. http://192.168.1.42:9099). Android emulator uses 10.0.2.2.
+  const EMULATOR_HOST = process.env.EXPO_PUBLIC_FIREBASE_AUTH_EMULATOR_URL || 'http://10.0.2.2:9099';
   try {
     connectAuthEmulator(_auth, EMULATOR_HOST, { disableWarnings: true });
-    console.log('[firebase] connected to auth emulator');
+    console.log('[firebase] connected to auth emulator at', EMULATOR_HOST);
   } catch (_e) {
     // already connected on hot-reload
   }

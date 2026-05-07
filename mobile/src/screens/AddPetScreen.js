@@ -50,6 +50,10 @@ export default function AddPetScreen({ navigation, route }) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
       quality: 0.5,
+      allowsEditing: true,
+      aspect: [1, 1],
+      maxWidth: 800,
+      maxHeight: 800,
     });
     if (!r.canceled && r.assets?.[0]) {
       const a = r.assets[0];

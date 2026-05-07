@@ -10,9 +10,14 @@ const client = axios.create({ baseURL: API_BASE, timeout: 20000 });
 client.interceptors.request.use(async (config) => {
   const user = auth.currentUser;
   if (user) {
-    const token = await user.getIdToken();
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = await user.getIdToken();
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    } catch (_e) {
+      // Token refresh failed (e.g. network offline). Send request without auth;
+      // the backend will return 401 with a clear error instead of a network crash.
+    }
   }
   return config;
 });

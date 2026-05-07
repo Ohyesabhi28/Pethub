@@ -18,8 +18,19 @@ const petSchema = Joi.object({
   age: Joi.number().min(0).max(50).required(),
   weightKg: Joi.number().min(0).max(200).allow(null),
   history: Joi.string().max(2000).allow('', null),
-  imageUrl: Joi.string().max(500_000).allow('', null), // allow data: URLs
+  imageUrl: Joi.string().max(1_500_000).allow('', null), // allow base64 data: URLs up to ~1.1MB binary
 });
+
+// PUT uses a separate schema so every field is optional (partial updates).
+const updatePetSchema = Joi.object({
+  name: Joi.string().min(1).max(60),
+  species: Joi.string().valid('dog', 'cat', 'bird', 'rabbit', 'other'),
+  breed: Joi.string().max(80).allow('', null),
+  age: Joi.number().min(0).max(50),
+  weightKg: Joi.number().min(0).max(200).allow(null),
+  history: Joi.string().max(2000).allow('', null),
+  imageUrl: Joi.string().max(1_500_000).allow('', null),
+}).min(1); // require at least one field to prevent empty updates
 
 router.get('/', async (req, res, next) => {
   try {
@@ -50,7 +61,7 @@ router.post('/', validate(petSchema), async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.put('/:id', validate(petSchema), async (req, res, next) => {
+router.put('/:id', validate(updatePetSchema), async (req, res, next) => {
   try {
     const ref = db.collection('pets').doc(req.params.id);
     const snap = await ref.get();
