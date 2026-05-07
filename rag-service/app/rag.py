@@ -74,6 +74,7 @@ class RAGStore:
 
     def _get_embeddings(self, texts: List[str]) -> List[List[float]]:
         """Fetch embeddings from Hugging Face Inference API."""
+        # Use the standard Inference API URL
         api_url = f"https://api-inference.huggingface.co/models/{self.embed_model_name}"
         headers = {"Authorization": f"Bearer {self.hf_token}"} if self.hf_token else {}
         
