@@ -1,6 +1,7 @@
 """FastAPI entrypoint for the RAG microservice."""
 from __future__ import annotations
 import os
+import asyncio
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
@@ -27,9 +28,11 @@ async def lifespan(_app: FastAPI):
         chunk_size=int(os.getenv("CHUNK_SIZE", "800")),
         overlap=int(os.getenv("CHUNK_OVERLAP", "120")),
     )
-    print("[rag-service] loading embedding model + index... (first run downloads ~80MB)")
-    store.build_or_load()
-    print(f"[rag-service] ready. {len(store.chunks)} chunks indexed.")
+    
+    # Start loading in background so port opens immediately for Render health check
+    print("[rag-service] starting background model load... (port will open now)")
+    asyncio.create_task(asyncio.to_thread(store.build_or_load))
+    
     yield
 
 
@@ -38,23 +41,29 @@ app = FastAPI(title="PetHub RAG Service", version="0.1.0", lifespan=lifespan)
 
 @app.get("/health")
 async def health():
-    return {"ok": True, "chunks": len(store.chunks) if store else 0}
+    is_ready = store is not None and store.model is not None
+    return {
+        "ok": True, 
+        "status": "ready" if is_ready else "loading",
+        "chunks": len(store.chunks) if store else 0
+    }
 
 
 @app.post("/reindex")
 async def reindex():
     """Force rebuild the index from data/. Useful after adding new PDFs."""
-    if store is None:
-        raise HTTPException(status_code=503, detail="store not ready")
-    store._build()  # noqa: SLF001
-    store._save()   # noqa: SLF001
+    if store is None or store.model is None:
+        raise HTTPException(status_code=503, detail="store not ready (still loading model)")
+    
+    await asyncio.to_thread(store._build)  # noqa: SLF001
+    await asyncio.to_thread(store._save)   # noqa: SLF001
     return {"ok": True, "chunks": len(store.chunks)}
 
 
 @app.post("/query", response_model=QueryResponse)
 async def query(req: QueryRequest):
-    if store is None:
-        raise HTTPException(status_code=503, detail="store not ready")
+    if store is None or store.model is None:
+        raise HTTPException(status_code=503, detail="RAG store is still initializing. Please try again in a minute.")
 
     top_k = int(os.getenv("TOP_K", "5"))
     hits = store.search(req.question, top_k=top_k)
