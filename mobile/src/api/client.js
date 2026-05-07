@@ -3,7 +3,8 @@
 import axios from 'axios';
 import { auth } from '../services/firebase';
 
-export const API_BASE = process.env.EXPO_PUBLIC_API_BASE || 'http://10.0.2.2:4000';
+// Replace the old local IP/localhost with your Render URL
+export const API_BASE = 'https://pethub-backend-kbs8.onrender.com';
 
 const client = axios.create({ baseURL: API_BASE, timeout: 20000 });
 
