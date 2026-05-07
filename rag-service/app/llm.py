@@ -75,23 +75,19 @@ async def _try_huggingface(prompt: str) -> Optional[str]:
     if not key:
         print("[llm:hf] Error: HF_API_TOKEN not set")
         return None
-    # Using a fast, high-quality model available on HF Inference API
+    # Using a high-quality model on HF Inference API
     model = os.getenv("HF_LLM_MODEL", "mistralai/Mistral-7B-Instruct-v0.3")
     try:
         from huggingface_hub import InferenceClient
         client = InferenceClient(model=model, token=key)
         
-        # Format for instruction models
-        formatted_prompt = f"<s>[INST] {prompt} [/INST]"
-        
-        response = client.text_generation(
-            formatted_prompt,
-            max_new_tokens=500,
+        # Use chat_completion for Mistral-Instruct
+        response = client.chat_completion(
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=500,
             temperature=0.3,
-            repetition_penalty=1.1,
-            stop_sequences=["</s>"]
         )
-        return response.strip() or None
+        return response.choices[0].message.content.strip() or None
     except Exception as e:
         print(f"[llm:hf] failed: {e}")
         return None
