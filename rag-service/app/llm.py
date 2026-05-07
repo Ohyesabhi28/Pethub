@@ -75,13 +75,13 @@ async def _try_huggingface(prompt: str) -> Optional[str]:
     if not key:
         print("[llm:hf] Error: HF_API_TOKEN not set")
         return None
-    # Using Zephyr, which is Hugging Face's flagship free model for this API
-    model = os.getenv("HF_LLM_MODEL", "HuggingFaceH4/zephyr-7b-beta")
+    # Force HF's own servers (not third-party providers like Novita/Together)
+    model = os.getenv("HF_LLM_MODEL", "meta-llama/Llama-3.2-3B-Instruct")
     try:
         from huggingface_hub import InferenceClient
-        client = InferenceClient(model=model, token=key)
-        
-        # Use chat_completion for Mistral-Instruct
+        # provider="hf-inference" forces use of HF's own free Inference API
+        client = InferenceClient(model=model, token=key, provider="hf-inference")
+        print(f"[llm:hf] using model: {model}", flush=True)
         response = client.chat_completion(
             messages=[{"role": "user", "content": prompt}],
             max_tokens=500,
