@@ -74,7 +74,8 @@ async def _try_openrouter(prompt: str) -> Optional[str]:
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return None
-    model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+    model = os.getenv("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
+    print(f"[llm:openrouter] using model: {model}", flush=True)
     timeout = float(os.getenv("OPENROUTER_TIMEOUT_S", "25"))
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
