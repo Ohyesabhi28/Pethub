@@ -1,4 +1,4 @@
-"""LLM dispatcher: Groq (primary) -> Ollama (local fallback) -> rule-based (final).
+"""LLM dispatcher: Groq (primary) -> Ollama (local fallback) -> rule-based (final). v2"""
 
 Groq offers a free API with Llama 3.3 70B — fast, reliable, no credit card needed.
 Sign up at https://console.groq.com and add GROQ_API_KEY to your environment.
