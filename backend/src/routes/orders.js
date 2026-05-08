@@ -60,7 +60,7 @@ router.post('/', validate(orderSchema), async (req, res, next) => {
     });
 
     let razorpayOrderId = null;
-    if (paymentMethod === 'mock_card' || paymentMethod === 'razorpay') {
+    if (paymentMethod === 'razorpay') {
       try {
         const options = {
           amount: Math.round(total * 100), // Razorpay expects paise
@@ -70,9 +70,11 @@ router.post('/', validate(orderSchema), async (req, res, next) => {
         const order = await razorpay.orders.create(options);
         razorpayOrderId = order.id;
       } catch (err) {
-        log.warn('Razorpay integration missing or failed', { error: err.message });
-        razorpayOrderId = 'mock_rzp_order_id';
+        log.error('Razorpay order creation failed', { error: err.message });
+        throw new HttpError(503, `Razorpay Service Unavailable: ${err.message}`);
       }
+    } else if (paymentMethod === 'mock_card') {
+      razorpayOrderId = 'mock_rzp_order_id';
     }
 
     res.status(201).json({ orderId: internalOrderId, total, items: lineItems, status: 'pending', razorpayOrderId });
