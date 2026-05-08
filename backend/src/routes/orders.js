@@ -61,17 +61,26 @@ router.post('/', validate(orderSchema), async (req, res, next) => {
 
     let razorpayOrderId = null;
     if (paymentMethod === 'razorpay') {
-      try {
-        const options = {
-          amount: Math.round(total * 100), // Razorpay expects paise
-          currency: 'INR',
-          receipt: internalOrderId,
-        };
-        const order = await razorpay.orders.create(options);
-        razorpayOrderId = order.id;
-      } catch (err) {
-        log.error('Razorpay order creation failed', { error: err.message });
-        throw new HttpError(503, `Razorpay Service Unavailable: ${err.message}`);
+      const hasRealKeys = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
+        && !process.env.RAZORPAY_KEY_ID.includes('mock')
+        && !process.env.RAZORPAY_KEY_SECRET.includes('mock');
+
+      if (hasRealKeys) {
+        try {
+          const options = {
+            amount: Math.round(total * 100), // Razorpay expects paise
+            currency: 'INR',
+            receipt: internalOrderId,
+          };
+          const order = await razorpay.orders.create(options);
+          razorpayOrderId = order.id;
+        } catch (err) {
+          log.error('Razorpay order creation failed', { error: err?.message || err });
+          throw new HttpError(503, `Payment gateway error: ${err?.message || 'Unknown error'}`);
+        }
+      } else {
+        log.warn('Razorpay keys not configured — using mock order for demo');
+        razorpayOrderId = 'mock_rzp_order_id';
       }
     } else if (paymentMethod === 'mock_card') {
       razorpayOrderId = 'mock_rzp_order_id';
